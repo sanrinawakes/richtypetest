@@ -1,4 +1,5 @@
-(function () {
+document.addEventListener("DOMContentLoaded", () => {
+
   const questions = window.MONEY_TYPE_QUESTIONS;
 
   const startBtn = document.getElementById("startBtn");
@@ -74,7 +75,6 @@
       return;
     }
 
-    // 完了
     window.RICHTYPE.buildResult(answers);
     window.location.href = "./result.html";
   }
@@ -89,4 +89,5 @@
   resetBtn.addEventListener("click", resetAll);
   nextBtn.addEventListener("click", goNext);
   prevBtn.addEventListener("click", goPrev);
-})();
+
+});
