@@ -7,71 +7,120 @@
   <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <div class="brand">
+        <div class="brand__title">診断結果</div>
+        <div class="brand__subtitle">金持ちタイプ診断（10問）</div>
+      </div>
+      <a class="btn btn--ghost" href="./index.html">もう一度診断</a>
+    </div>
+  </header>
+
   <main class="container">
 
-    <!-- 結果が無い場合 -->
+    <!-- 結果データが無い場合 -->
     <section class="card" id="noData" style="display:none;">
       <h2>結果が見つかりません</h2>
       <p>先に診断を完了してください。</p>
-      <a href="./index.html">診断に戻る</a>
+      <div class="actions">
+        <a class="btn btn--primary" href="./index.html">診断に戻る</a>
+      </div>
     </section>
 
-    <!-- HERO -->
-    <section class="card" id="hero" style="display:none;">
-      <span id="badge"></span>
-      <h1 id="typeName"></h1>
-      <p id="tagline"></p>
+    <!-- HERO（JSがここに書き込む） -->
+    <section class="card resultHero" id="hero" style="display:none;">
+      <div class="resultHero__badge" id="badge">TYPE</div>
+      <h1 class="resultHero__title" id="typeName"></h1>
+      <p class="resultHero__tagline" id="tagline"></p>
 
-      <p>
-        主軸：<span id="primary"></span><br>
-        補助：<span id="secondary"></span><br>
-        判定：<span id="blendNote"></span>
-      </p>
+      <div class="resultHero__meta">
+        <div class="metaBox">
+          <div class="metaBox__label">主軸タイプ</div>
+          <div class="metaBox__value" id="primary"></div>
+        </div>
+        <div class="metaBox">
+          <div class="metaBox__label">補助タイプ</div>
+          <div class="metaBox__value" id="secondary"></div>
+        </div>
+        <div class="metaBox">
+          <div class="metaBox__label">判定</div>
+          <div class="metaBox__value" id="blendNote"></div>
+        </div>
+      </div>
 
-      <button id="copyBtn">結果をコピー</button>
+      <div class="actions">
+        <button class="btn btn--ghost" id="copyBtn">結果をコピー</button>
+      </div>
     </section>
 
     <!-- スコア -->
     <section class="card" id="scoreCard" style="display:none;">
-      <h3>スコア内訳</h3>
-      <div id="bars"></div>
+      <h2>スコア内訳</h2>
+      <div class="bars" id="bars"></div>
     </section>
 
-    <!-- 詳細解説 -->
+    <!-- 詳細 -->
     <section class="card" id="detailCard" style="display:none;">
       <h3>0) この診断が明らかにしていること</h3>
       <div class="content">
         <p>
-          本診断は、あなたが無理をせず、自然体のままで
-          お金や豊かさを引き寄せやすい傾向を整理するためのものです。
+          本診断は、あなたが無理をせず、自然体のままでお金や豊かさを引き寄せやすい傾向を整理するためのものです。
+        </p>
+        <p>
+          大切なのは「自分に合っていない方法を頑張り続けない」こと。
+          向いている引き寄せ方・働き方・お金との関わり方を選ぶことで、
+          努力感を強めなくても結果がついてきやすくなります。
         </p>
       </div>
 
-      <h3>1) あなたが豊かになりやすい理由</h3>
-      <div id="essence"></div>
+      <div class="panel">
+        <h3>1) あなたが豊かになりやすい理由</h3>
+        <div class="content" id="essence"></div>
+      </div>
 
-      <h3>2) 向いている仕事・役割</h3>
-      <div id="jobs"></div>
+      <div class="panel">
+        <h3>2) 向いている仕事・役割</h3>
+        <div class="content" id="jobs"></div>
+      </div>
 
-      <h3>3) 成果が出やすい行動</h3>
-      <div id="doMore"></div>
+      <div class="panel">
+        <h3>3) 成果が出やすい行動</h3>
+        <div class="content" id="doMore"></div>
+      </div>
 
-      <h3>4) つまずきやすいポイント</h3>
-      <div id="pitfalls"></div>
+      <div class="panel">
+        <h3>4) つまずきやすいポイント</h3>
+        <div class="content" id="pitfalls"></div>
+      </div>
 
-      <h3>5) 低意識と高意識の分岐</h3>
-      <div id="lowUse"></div>
-      <div id="highUse"></div>
+      <div class="panel">
+        <h3>5) 低意識と高意識の分岐</h3>
+        <div class="grid2">
+          <div class="splitBox splitBox--low">
+            <div class="splitBox__head">低意識（詰まりやすい使い方）</div>
+            <div class="content" id="lowUse"></div>
+          </div>
+          <div class="splitBox splitBox--high">
+            <div class="splitBox__head">高意識（伸びやすい使い方）</div>
+            <div class="content" id="highUse"></div>
+          </div>
+        </div>
+      </div>
 
-      <h3>6) 行動のサイン</h3>
-      <div id="signals"></div>
+      <div class="panel">
+        <h3>6) 行動のサイン</h3>
+        <div class="content" id="signals"></div>
+      </div>
 
-      <h3>7) 今週の実験</h3>
-      <div id="experiment"></div>
+      <div class="panel">
+        <h3>7) 今週の実験</h3>
+        <div class="content" id="experiment"></div>
+      </div>
 
-      <section id="blendPanel" style="display:none;">
-        <h3>複合型の扱い方</h3>
-        <div id="blendGuide"></div>
+      <section class="panel" id="blendPanel" style="display:none;">
+        <h3>8) 複合型の扱い方</h3>
+        <div class="content" id="blendGuide"></div>
       </section>
     </section>
 
