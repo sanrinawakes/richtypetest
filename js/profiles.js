@@ -314,13 +314,13 @@ window.MONEY_TYPE_PROFILES = {
   // ---------------------------------------------------
   mechanic: {
     code: "MEC",
-    name: "構造最適化型",
-    badge: "SYSTEM",
-    tagline: "仕組み化で、再現性のある豊かさを作る",
+    name: "システム設計型",
+    badge: "SYSTEM DESIGN",
+    tagline: "仕組みと再現性で安定を作る",
 
     essence: `
       <p>
-        構造最適化型は、一度整えた仕組みで
+        システム設計型は、一度整えた仕組みで
         <b>繰り返し結果を生む</b>タイプです。
       </p>
     `,
