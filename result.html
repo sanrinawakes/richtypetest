@@ -1,30 +1,85 @@
-<h3>0) この診断が明らかにしていること</h3>
-<div class="content">
-  <p>
-    本診断は、あなたが<b>無理をせず、自然体のままでお金や豊かさを引き寄せやすい傾向</b>を明らかにするためのものです。
-  </p>
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>診断結果｜金持ちタイプ診断</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <main class="container">
 
-  <p>
-    人によって、
-    <ul>
-      <li>人との関わりを通じて豊かさが広がる人</li>
-      <li>信頼や継続を積み重ねることで安定する人</li>
-      <li>判断力や仕組み化によって成果が出やすい人</li>
-      <li>時間を味方につけて着実に育てていく人</li>
-    </ul>
-    など、<b>お金や機会が自然に集まってくるルートは異なります。</b>
-  </p>
+    <!-- 結果が無い場合 -->
+    <section class="card" id="noData" style="display:none;">
+      <h2>結果が見つかりません</h2>
+      <p>先に診断を完了してください。</p>
+      <a href="./index.html">診断に戻る</a>
+    </section>
 
-  <p>
-    この診断では、あなたの性格や理想像ではなく、<br>
-    <b>これまでの行動の傾向や、無意識に選びやすい行動パターン</b>をもとに、<br>
-    「どのルートを選ぶと、もっとも無理なく、楽に、楽しく豊かになりやすいか」
-    を整理しています。
-  </p>
+    <!-- HERO -->
+    <section class="card" id="hero" style="display:none;">
+      <span id="badge"></span>
+      <h1 id="typeName"></h1>
+      <p id="tagline"></p>
 
-  <p>
-    重要なのは、<b>自分に合っていない方法を頑張り続けないこと</b>です。<br>
-    向いている引き寄せ方・働き方・お金との関わり方を選ぶことで、<br>
-    努力感を強めなくても、結果がついてきやすくなります。
-  </p>
-</div>
+      <p>
+        主軸：<span id="primary"></span><br>
+        補助：<span id="secondary"></span><br>
+        判定：<span id="blendNote"></span>
+      </p>
+
+      <button id="copyBtn">結果をコピー</button>
+    </section>
+
+    <!-- スコア -->
+    <section class="card" id="scoreCard" style="display:none;">
+      <h3>スコア内訳</h3>
+      <div id="bars"></div>
+    </section>
+
+    <!-- 詳細解説 -->
+    <section class="card" id="detailCard" style="display:none;">
+      <h3>0) この診断が明らかにしていること</h3>
+      <div class="content">
+        <p>
+          本診断は、あなたが無理をせず、自然体のままで
+          お金や豊かさを引き寄せやすい傾向を整理するためのものです。
+        </p>
+      </div>
+
+      <h3>1) あなたが豊かになりやすい理由</h3>
+      <div id="essence"></div>
+
+      <h3>2) 向いている仕事・役割</h3>
+      <div id="jobs"></div>
+
+      <h3>3) 成果が出やすい行動</h3>
+      <div id="doMore"></div>
+
+      <h3>4) つまずきやすいポイント</h3>
+      <div id="pitfalls"></div>
+
+      <h3>5) 低意識と高意識の分岐</h3>
+      <div id="lowUse"></div>
+      <div id="highUse"></div>
+
+      <h3>6) 行動のサイン</h3>
+      <div id="signals"></div>
+
+      <h3>7) 今週の実験</h3>
+      <div id="experiment"></div>
+
+      <section id="blendPanel" style="display:none;">
+        <h3>複合型の扱い方</h3>
+        <div id="blendGuide"></div>
+      </section>
+    </section>
+
+  </main>
+
+  <!-- JS（この順番厳守） -->
+  <script src="./js/profiles.js"></script>
+  <script src="./js/logic.js"></script>
+  <script src="./js/result.js"></script>
+</body>
+</html>
