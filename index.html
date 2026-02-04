@@ -1,41 +1,103 @@
-<section class="card intro" id="intro">
-  <h1>金持ちタイプ診断</h1>
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>金持ちタイプ診断（10問）</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <div class="brand">
+        <div class="brand__title">金持ちタイプ診断</div>
+        <div class="brand__subtitle">10問・約1〜2分｜自然体で豊かになりやすい傾向を整理</div>
+      </div>
+      <a class="btn btn--ghost" href="./result.html">結果ページ</a>
+    </div>
+  </header>
 
-  <p class="lead">
-    この診断は、<b>あなたがもっとも自然体で、無理なく、楽しく裕福になりやすい道</b>を整理するためのものです。
-  </p>
+  <main class="container">
 
-  <p class="lead">
-    人によって、
-  </p>
+    <!-- ====== INTRO（説明・スタートボタン） ====== -->
+    <section class="card intro" id="intro">
+      <h1>金持ちタイプ診断</h1>
 
-  <ul>
-    <li>人との関わりを広げることで豊かさが増える人</li>
-    <li>信頼や継続を積み重ねることで安定する人</li>
-    <li>判断力や仕組み化によって成果が出やすい人</li>
-    <li>時間を味方につけて着実に育てていく人</li>
-  </ul>
+      <p class="lead">
+        この診断は、<b>あなたがもっとも自然体で、無理なく、楽しく裕福になりやすい道</b>を整理するためのものです。
+      </p>
 
-  <p class="lead">
-    など、<b>お金やチャンスが自然に集まりやすいルートは人それぞれ異なります。</b>
-  </p>
+      <p class="lead">人によって、</p>
 
-  <p class="lead">
-    この診断では、性格や理想像ではなく、<br>
-    <b>これまでの行動の傾向や、無意識に選びやすい行動パターン</b>をもとに、<br>
-    「どの道を選ぶと、もっとも力を使わずに結果が出やすいか」を見ていきます。
-  </p>
+      <ul>
+        <li>人との関わりを広げることで豊かさが増える人</li>
+        <li>信頼や継続を積み重ねることで安定する人</li>
+        <li>判断力や仕組み化によって成果が出やすい人</li>
+        <li>時間を味方につけて着実に育てていく人</li>
+      </ul>
 
-  <div class="notice">
-    <h3>回答のしかた（重要）</h3>
-    <ul>
-      <li>「こうありたい」ではなく、<b>実際の自分の行動</b>を思い出して選んでください</li>
-      <li>迷った場合は、<b>何も考えずに選びがちな方</b>を選んでください</li>
-      <li>正解・不正解はありません。合う道を見つけるための整理です</li>
-    </ul>
-  </div>
+      <p class="lead">
+        など、<b>お金やチャンスが自然に集まりやすいルートは人それぞれ異なります。</b>
+      </p>
 
-  <div class="actions">
-    <button class="btn btn--primary" id="startBtn">診断をはじめる</button>
-  </div>
-</section>
+      <p class="lead">
+        この診断では、性格や理想像ではなく、<br>
+        <b>これまでの行動の傾向や、無意識に選びやすい行動パターン</b>をもとに、<br>
+        「どの道を選ぶと、もっとも力を使わずに結果が出やすいか」を見ていきます。
+      </p>
+
+      <div class="notice">
+        <h3>回答のしかた（重要）</h3>
+        <ul>
+          <li>「こうありたい」ではなく、<b>実際の自分の行動</b>を思い出して選んでください</li>
+          <li>迷った場合は、<b>何も考えずに選びがちな方</b>を選んでください</li>
+          <li>正解・不正解はありません。合う道を見つけるための整理です</li>
+        </ul>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn--primary" id="startBtn">診断をはじめる</button>
+      </div>
+    </section>
+
+    <!-- ====== QUIZ（質問エリア：これが無いと動かない） ====== -->
+    <section class="card quiz" id="quiz" style="display:none;">
+      <div class="quiz__head">
+        <div class="quiz__progress">
+          <div class="quiz__progressbar">
+            <div class="quiz__progressbarFill" id="progressFill"></div>
+          </div>
+          <div class="quiz__counter" id="counterText">質問 1 / 10</div>
+        </div>
+
+        <button class="btn btn--ghost btn--small" id="resetBtn">最初から</button>
+      </div>
+
+      <div class="quiz__body">
+        <h2 class="quiz__question" id="questionText"></h2>
+        <p class="quiz__hint" id="questionHint"></p>
+        <div class="choices" id="choices"></div>
+      </div>
+
+      <div class="quiz__foot">
+        <button class="btn btn--ghost" id="prevBtn">戻る</button>
+        <button class="btn btn--primary" id="nextBtn" disabled>次へ</button>
+      </div>
+    </section>
+
+    <section class="card smallprint">
+      <h3>免責</h3>
+      <p>
+        本診断は自己理解の補助ツールです。投資助言・税務助言・法務助言ではありません。
+        重要な意思決定は自己責任で行ってください。
+      </p>
+    </section>
+
+  </main>
+
+  <!-- JS 読み込み順（この順番が必須） -->
+  <script src="./js/questions.js"></script>
+  <script src="./js/logic.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
