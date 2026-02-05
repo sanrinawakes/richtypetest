@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-  const result = window.RICHTYPE?.loadResult();
+  // 依存が揃っているか
+  const R = window.RICHTYPE;
   const profiles = window.MONEY_TYPE_PROFILES;
 
   const noData = document.getElementById("noData");
@@ -8,59 +8,76 @@ document.addEventListener("DOMContentLoaded", () => {
   const scoreCard = document.getElementById("scoreCard");
   const detailCard = document.getElementById("detailCard");
 
-  if (!result || !profiles) {
+  // 必要最低限のDOMが無い場合は何もしない（事故防止）
+  if (!noData || !hero || !scoreCard || !detailCard) {
+    // ここで止める。HTMLが別物になっている可能性が高い。
+    return;
+  }
+
+  // 結果データが無ければ noData を出す
+  if (!R || typeof R.loadResult !== "function" || !profiles) {
     noData.style.display = "block";
     return;
   }
 
-  const primaryProfile = profiles[result.primaryKey];
-  const secondaryProfile = result.secondaryKey
-    ? profiles[result.secondaryKey]
-    : null;
+  const result = R.loadResult();
+  if (!result || !result.primaryKey || !result.scores) {
+    noData.style.display = "block";
+    return;
+  }
 
-  /* ========= HERO ========= */
-  document.getElementById("badge").textContent = primaryProfile.badge;
-  document.getElementById("typeName").textContent = primaryProfile.name;
-  document.getElementById("tagline").textContent = primaryProfile.tagline;
-  document.getElementById("primary").textContent =
-    `${primaryProfile.name}（${primaryProfile.code}）`;
-  document.getElementById("secondary").textContent =
-    secondaryProfile
-      ? `${secondaryProfile.name}（${secondaryProfile.code}）`
-      : "—";
-  document.getElementById("blendNote").textContent = result.blend.note;
+  const primaryKey = result.primaryKey;
+  const secondaryKey = result.secondaryKey || null;
+
+  const primaryProfile = profiles[primaryKey];
+  const secondaryProfile = secondaryKey ? profiles[secondaryKey] : null;
+
+  if (!primaryProfile) {
+    noData.style.display = "block";
+    return;
+  }
+
+  // ========= HERO描画 =========
+  const badgeEl = document.getElementById("badge");
+  const typeNameEl = document.getElementById("typeName");
+  const taglineEl = document.getElementById("tagline");
+  const primaryEl = document.getElementById("primary");
+  const secondaryEl = document.getElementById("secondary");
+  const blendNoteEl = document.getElementById("blendNote");
+
+  if (!badgeEl || !typeNameEl || !taglineEl || !primaryEl || !secondaryEl || !blendNoteEl) {
+    noData.style.display = "block";
+    return;
+  }
+
+  badgeEl.textContent = primaryProfile.badge || "TYPE";
+  typeNameEl.textContent = primaryProfile.name || "";
+  taglineEl.textContent = primaryProfile.tagline || "";
+
+  primaryEl.textContent = `${primaryProfile.name}（${primaryProfile.code}）`;
+  secondaryEl.textContent = secondaryProfile ? `${secondaryProfile.name}（${secondaryProfile.code}）` : "—";
+  blendNoteEl.textContent = result.blend?.note || "";
 
   hero.style.display = "block";
 
-  /* ========= COPY ========= */
-  document.getElementById("copyBtn").addEventListener("click", async () => {
-    const text =
-      `【金持ちタイプ診断】\n` +
-      `主軸：${primaryProfile.name}（${primaryProfile.code}）\n` +
-      `補助：${secondaryProfile ? secondaryProfile.name : "—"}\n` +
-      `判定：${result.blend.note}`;
+  // ========= SCORE描画 =========
+  const barsEl = document.getElementById("bars");
+  if (!barsEl) {
+    noData.style.display = "block";
+    return;
+  }
 
-    try {
-      await navigator.clipboard.writeText(text);
-      const btn = document.getElementById("copyBtn");
-      btn.textContent = "コピーしました";
-      setTimeout(() => (btn.textContent = "結果をコピー"), 1500);
-    } catch {
-      alert(text);
-    }
-  });
-
-  /* ========= SCORE ========= */
-  const order = window.RICHTYPE.TYPE_ORDER;
+  const order = (R.TYPE_ORDER && Array.isArray(R.TYPE_ORDER)) ? R.TYPE_ORDER : Object.keys(result.scores);
   const scores = result.scores;
-  const max = Math.max(...Object.values(scores), 1);
-  const bars = document.getElementById("bars");
 
-  bars.innerHTML = "";
+  const max = Math.max(...Object.values(scores).filter(v => typeof v === "number"), 1);
+  barsEl.innerHTML = "";
 
-  order.forEach(key => {
+  order.forEach((key) => {
     const p = profiles[key];
-    const v = scores[key] || 0;
+    if (!p) return;
+
+    const v = typeof scores[key] === "number" ? scores[key] : 0;
     const pct = Math.round((v / max) * 100);
 
     const row = document.createElement("div");
@@ -74,94 +91,109 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="bar__fill" style="width:${pct}%"></div>
       </div>
     `;
-    bars.appendChild(row);
+    barsEl.appendChild(row);
   });
 
   scoreCard.style.display = "block";
 
-  /* ========= DETAIL ========= */
-  document.getElementById("essence").innerHTML = primaryProfile.essence;
-  document.getElementById("jobs").innerHTML = primaryProfile.jobs;
-  document.getElementById("doMore").innerHTML = primaryProfile.doMore;
-  document.getElementById("pitfalls").innerHTML = primaryProfile.pitfalls;
-  document.getElementById("lowUse").innerHTML = primaryProfile.lowUse;
-  document.getElementById("highUse").innerHTML = primaryProfile.highUse;
-  document.getElementById("signals").innerHTML = primaryProfile.signals;
-  document.getElementById("experiment").innerHTML = primaryProfile.experiment;
+  // ========= DETAIL描画 =========
+  const essenceEl = document.getElementById("essence");
+  const jobsEl = document.getElementById("jobs");
+  const doMoreEl = document.getElementById("doMore");
+  const pitfallsEl = document.getElementById("pitfalls");
+  const lowUseEl = document.getElementById("lowUse");
+  const highUseEl = document.getElementById("highUse");
+  const signalsEl = document.getElementById("signals");
+  const experimentEl = document.getElementById("experiment");
 
-  /* ========= BLEND ========= */
-  const blendPanel = document.getElementById("blendPanel");
-  const blendGuide = document.getElementById("blendGuide");
-
-  if (secondaryProfile && result.blend.isBlend) {
-    blendPanel.style.display = "block";
-
-    const tipsMap = primaryProfile.blendTips || {};
-    const specific = tipsMap[result.secondaryKey];
-
-    const fallback = `
-      <p><b>主軸：${primaryProfile.name}</b> と
-      <b>補助：${secondaryProfile.name}</b> を併用する複合型です。</p>
-      <ul>
-        <li>迷ったら<b>主軸の勝ち筋</b>に戻る</li>
-        <li>崩れる時は主軸と補助の罠が同時に出やすい</li>
-        <li>主軸で伸ばし、補助で安定させる</li>
-      </ul>
-    `;
-
-    blendGuide.innerHTML = specific
-      ? `<p>${specific}</p><hr>${fallback}`
-      : fallback;
-  }
-
-  detailCard.style.display = "block";
-  // ===================================================
-// 診断結果「全文コピー」ボタン用
-// ===================================================
-document.getElementById("copyAllBtn")?.addEventListener("click", async () => {
-  const result = window.RICHTYPE.loadResult();
-  const profiles = window.MONEY_TYPE_PROFILES;
-
-  if (!result || !profiles) {
-    alert("診断結果が見つかりません");
+  if (!essenceEl || !jobsEl || !doMoreEl || !pitfallsEl || !lowUseEl || !highUseEl || !signalsEl || !experimentEl) {
+    noData.style.display = "block";
     return;
   }
 
-  const primaryKey = result.primaryKey;
-  const secondaryKey = result.secondaryKey;
+  // profiles.js のHTMLをそのまま流し込み
+  essenceEl.innerHTML = primaryProfile.essence || "";
+  jobsEl.innerHTML = primaryProfile.jobs || "";
+  doMoreEl.innerHTML = primaryProfile.doMore || "";
+  pitfallsEl.innerHTML = primaryProfile.pitfalls || "";
+  lowUseEl.innerHTML = primaryProfile.lowUse || "";
+  highUseEl.innerHTML = primaryProfile.highUse || "";
+  signalsEl.innerHTML = primaryProfile.signals || "";
+  experimentEl.innerHTML = primaryProfile.experiment || "";
 
-  let text = "【金持ちタイプ診断｜結果データ】\n\n";
+  // ========= BLEND描画 =========
+  const blendPanel = document.getElementById("blendPanel");
+  const blendGuide = document.getElementById("blendGuide");
 
-  // 主軸タイプ
-  text += "■ 主軸タイプ\n";
-  text += `${profiles[primaryKey].name}（${primaryKey}）\n\n`;
+  if (blendPanel && blendGuide) {
+    // 初期は非表示のまま
+    if (secondaryProfile && result.blend?.isBlend) {
+      blendPanel.style.display = "block";
 
-  // 補助タイプ
-  text += "■ 補助タイプ\n";
-  text += secondaryKey
-    ? `${profiles[secondaryKey].name}（${secondaryKey}）\n\n`
-    : "なし\n\n";
+      const tipsMap = primaryProfile.blendTips || {};
+      const specific = tipsMap[secondaryKey];
 
-  // スコア内訳
-  text += "■ スコア内訳\n";
-  Object.entries(result.scores).forEach(([key, value]) => {
-    text += `${key}: ${value}\n`;
-  });
+      const fallback = `
+        <p><b>主軸：${primaryProfile.name}</b> と <b>補助：${secondaryProfile.name}</b> を併用する複合型です。</p>
+        <ul>
+          <li>迷ったら<b>主軸の勝ち筋</b>に戻る</li>
+          <li>崩れる時は主軸と補助の罠が同時に出やすい</li>
+          <li>主軸で伸ばし、補助で安定させる（全部やらない）</li>
+        </ul>
+      `;
 
-  // Q6 / Q10
-  const q6Index = result.answers[5]; // Q6
-  const q10Index = result.answers[9]; // Q10
+      blendGuide.innerHTML = specific
+        ? `<p>${specific}</p><hr style="border:0;border-top:1px solid rgba(255,255,255,.12);margin:12px 0">${fallback}`
+        : fallback;
+    }
+  }
 
-  text += "\n■ Q6（問題・相談が起きたとき）\n";
-  text += `選択：${["A","B","C","D"][q6Index]}\n`;
+  detailCard.style.display = "block";
 
-  text += "\n■ Q10（余裕がないとき）\n";
-  text += `選択：${["A","B","C","D"][q10Index]}\n`;
+  // ========= COPY（短い結果コピー） =========
+  const copyBtn = document.getElementById("copyBtn");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", async () => {
+      const text =
+        `【金持ちタイプ診断】\n` +
+        `主軸：${primaryProfile.name}（${primaryProfile.code}）\n` +
+        `補助：${secondaryProfile ? secondaryProfile.name : "—"}\n` +
+        `判定：${result.blend?.note || ""}`;
 
-  try {
-    await navigator.clipboard.writeText(text);
-    alert("診断結果をすべてコピーしました。\nmyGPTに貼り付けてください。");
-  } catch (e) {
-    alert("コピーに失敗しました");
+      try {
+        await navigator.clipboard.writeText(text);
+        const prev = copyBtn.textContent;
+        copyBtn.textContent = "コピーしました";
+        setTimeout(() => (copyBtn.textContent = prev), 1500);
+      } catch {
+        // クリップボード不可の場合はalertで出す
+        alert(text);
+      }
+    });
+  }
+
+  // ========= COPY（公式結果全文コピー：myGPT用） =========
+  const copyAllBtn = document.getElementById("copyAllBtn");
+  if (copyAllBtn) {
+    copyAllBtn.addEventListener("click", async () => {
+      // 画面に表示されているもの＝公式結果としてそのままコピー（事故らない）
+      // hero/detail/scoreが見える状態で押す前提
+      const heroText = hero.innerText || "";
+      const scoreText = scoreCard.innerText || "";
+      const detailText = detailCard.innerText || "";
+
+      const full =
+        `【金持ちタイプ診断｜公式結果】\n\n` +
+        heroText.trim() + `\n\n` +
+        scoreText.trim() + `\n\n` +
+        detailText.trim() + `\n`;
+
+      try {
+        await navigator.clipboard.writeText(full);
+        alert("診断結果をすべてコピーしました。\nそのまま myGPT に貼り付けてください。");
+      } catch {
+        alert(full);
+      }
+    });
   }
 });
