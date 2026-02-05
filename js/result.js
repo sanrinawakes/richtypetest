@@ -115,4 +115,53 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   detailCard.style.display = "block";
+  // ===================================================
+// 診断結果「全文コピー」ボタン用
+// ===================================================
+document.getElementById("copyAllBtn")?.addEventListener("click", async () => {
+  const result = window.RICHTYPE.loadResult();
+  const profiles = window.MONEY_TYPE_PROFILES;
+
+  if (!result || !profiles) {
+    alert("診断結果が見つかりません");
+    return;
+  }
+
+  const primaryKey = result.primaryKey;
+  const secondaryKey = result.secondaryKey;
+
+  let text = "【金持ちタイプ診断｜結果データ】\n\n";
+
+  // 主軸タイプ
+  text += "■ 主軸タイプ\n";
+  text += `${profiles[primaryKey].name}（${primaryKey}）\n\n`;
+
+  // 補助タイプ
+  text += "■ 補助タイプ\n";
+  text += secondaryKey
+    ? `${profiles[secondaryKey].name}（${secondaryKey}）\n\n`
+    : "なし\n\n";
+
+  // スコア内訳
+  text += "■ スコア内訳\n";
+  Object.entries(result.scores).forEach(([key, value]) => {
+    text += `${key}: ${value}\n`;
+  });
+
+  // Q6 / Q10
+  const q6Index = result.answers[5]; // Q6
+  const q10Index = result.answers[9]; // Q10
+
+  text += "\n■ Q6（問題・相談が起きたとき）\n";
+  text += `選択：${["A","B","C","D"][q6Index]}\n`;
+
+  text += "\n■ Q10（余裕がないとき）\n";
+  text += `選択：${["A","B","C","D"][q10Index]}\n`;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("診断結果をすべてコピーしました。\nmyGPTに貼り付けてください。");
+  } catch (e) {
+    alert("コピーに失敗しました");
+  }
 });
